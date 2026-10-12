@@ -26,3 +26,10 @@ with tempfile.TemporaryDirectory() as root:
 `exist_ok=True` only accepts a destination that is an **empty** directory. A non-empty directory is rejected even with `exist_ok`, because merging into existing trees would require deciding how to reconcile conflicting permissions and timestamps — a problem this library deliberately does not solve. If you need merge semantics, delete the destination first or use a different tool.
 
 Unsupported file types (device nodes, fifos, sockets) raise `ValueError`; copying them correctly typically requires root and is outside the scope of a pure-Python standard-library implementation.
+
+## Performance
+
+The window keeps a bounded buffer, so `push` is constant time and memory does not
+grow with the length of the stream. `peak` and `trough` are linear in the window
+size, which is the trade that keeps `push` cheap.
+
